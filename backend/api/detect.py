@@ -34,9 +34,10 @@ def analyze_text(text: str):
     )
 
     return {
-        "language": language,
-        "xlmr_score": xlmr_score,
-        "lexical_richness": lexical_score,
-        "average_sentence_length": avg_sentence_len,
-        "final_ai_score": final_score
-    }
+    "language": language,
+    "xlmr_label": prediction["label"],
+    "xlmr_score": xlmr_score,
+    "lexical_richness": lexical_score,
+    "average_sentence_length": avg_sentence_len,
+    "final_ai_score": final_score
+}
