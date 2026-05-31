@@ -3,18 +3,29 @@ from backend.services.language_detection import detect_language
 from backend.services.stylometry import lexical_richness, average_sentence_length
 from backend.services.ensemble import weighted_score
 
+from models.xlmr.predictor import predict_xlmr
+
+
 def analyze_text(text: str):
+
     cleaned_text = clean_text(text)
+
     language = detect_language(cleaned_text)
 
     lexical_score = lexical_richness(cleaned_text)
+
     avg_sentence_len = average_sentence_length(cleaned_text)
 
-    # Score temporaire avant intégration du modèle XLM-RoBERTa
-    xlmr_score = 0.70
+    prediction = predict_xlmr(cleaned_text)
+
+    xlmr_score = prediction["score"]
+
     stylometry_score = lexical_score
 
-    final_score = weighted_score(xlmr_score, stylometry_score)
+    final_score = weighted_score(
+        xlmr_score,
+        stylometry_score
+    )
 
     return {
         "language": language,
