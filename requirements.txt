@@ -12,3 +12,7 @@ pydantic
 transformers
 torch
 sentencepiece
+datasets
+accelerate
+evaluate
+scikit-learn
