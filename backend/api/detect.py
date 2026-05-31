@@ -5,8 +5,12 @@ from backend.services.ensemble import weighted_score
 
 from models.xlmr.predictor import predict_xlmr
 
+print("DETECT IMPORT OK")
+
 
 def analyze_text(text: str):
+
+    print("ANALYZE TEXT CALLED")
 
     cleaned_text = clean_text(text)
 
@@ -16,7 +20,9 @@ def analyze_text(text: str):
 
     avg_sentence_len = average_sentence_length(cleaned_text)
 
+    print("CALLING XLMR...")
     prediction = predict_xlmr(cleaned_text)
+    print("XLMR RESULT:", prediction)
 
     xlmr_score = prediction["score"]
 
