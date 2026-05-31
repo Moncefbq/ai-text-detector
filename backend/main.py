@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from backend.api.detect import analyze_text
 
+print("MAIN FILE LOADED")
+
 app = FastAPI(
     title="AICheck Pro API",
     description="Advanced AI-generated text detection API",
@@ -20,4 +22,5 @@ def home():
 
 @app.post("/detect")
 def detect(request: TextRequest):
+    print("POST /detect CALLED")
     return analyze_text(request.text)
