@@ -128,7 +128,7 @@ def compute_metrics(eval_pred):
 
 training_args = TrainingArguments(
     output_dir=OUTPUT_DIR,
-    eval_strategy="epoch",
+    evaluation_strategy="epoch",
     save_strategy="epoch",
     learning_rate=2e-5,
     per_device_train_batch_size=4,
