@@ -16,3 +16,5 @@ datasets
 accelerate
 evaluate
 scikit-learn
+torch
+transformers
