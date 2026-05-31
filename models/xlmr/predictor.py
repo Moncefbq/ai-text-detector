@@ -1,16 +1,12 @@
 from transformers import pipeline
 
-print("XLMR LOADED")
-
 classifier = pipeline(
     "text-classification",
-    model="papluca/xlm-roberta-base-language-detection"
+    model="./models/final_xlmr",
+    tokenizer="./models/final_xlmr"
 )
 
 def predict_xlmr(text):
-
-    print("PREDICT CALLED")
-
     result = classifier(text)
 
     return {
