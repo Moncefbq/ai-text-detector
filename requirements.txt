@@ -9,3 +9,6 @@ langdetect
 fastapi
 uvicorn
 pydantic
+transformers
+torch
+sentencepiece
