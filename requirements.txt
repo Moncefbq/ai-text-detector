@@ -6,3 +6,6 @@ pandas
 scikit-learn
 plotly
 langdetect
+fastapi
+uvicorn
+pydantic
