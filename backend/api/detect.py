@@ -1,6 +1,6 @@
 from backend.services.preprocessing import clean_text
 from backend.services.language_detection import detect_language
-from backend.services.stylometry import lexical_richness, average_sentence_length
+from backend.services.stylometry import stylometry_report
 from backend.services.sentence_analysis import analyze_sentences
 from backend.services.burstiness import calculate_burstiness
 from backend.services.perplexity import calculate_perplexity
@@ -20,8 +20,10 @@ def analyze_text(text: str):
     cleaned_text = clean_text(text)
     language = detect_language(cleaned_text)
 
-    lexical_score = lexical_richness(cleaned_text)
-    avg_sentence_len = average_sentence_length(cleaned_text)
+    style = stylometry_report(cleaned_text)
+
+    lexical_score = style["lexical_richness"]
+    avg_sentence_len = style["average_sentence_length"]
 
     xlmr_prediction = predict_xlmr(cleaned_text)
     xlmr_label = xlmr_prediction["label"]
@@ -86,6 +88,8 @@ def analyze_text(text: str):
         "lexical_richness": round(lexical_score, 4),
         "stylometry_ai_score": round(stylometry_ai_score, 4),
         "average_sentence_length": avg_sentence_len,
+
+        "stylometry": style,
 
         "burstiness": burstiness,
         "perplexity": perplexity,
