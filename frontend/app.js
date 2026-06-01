@@ -18,6 +18,18 @@ async function analyzeText() {
 
   const data = await response.json();
 
+  console.log("========== DEBUG ==========");
+  console.log("XLMR Label :", data.xlmr_label);
+  console.log("XLMR Score :", data.xlmr_score);
+
+  console.log("DeBERTa Label :", data.deberta_label);
+  console.log("DeBERTa Score :", data.deberta_score);
+  console.log("DeBERTa AI Score :", data.deberta_ai_score);
+
+  console.log("Sentence AI Score :", data.sentence_ai_score);
+  console.log("Final AI Score :", data.final_ai_score);
+  console.log("===========================");
+
   document.getElementById("results").classList.remove("hidden");
   document.getElementById("sentencesSection").classList.remove("hidden");
 
