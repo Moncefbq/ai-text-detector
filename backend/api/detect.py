@@ -5,6 +5,14 @@ from backend.services.sentence_analysis import analyze_sentences
 from backend.services.burstiness import calculate_burstiness
 from backend.services.perplexity import calculate_perplexity
 
+from backend.services.ensemble import (
+    weighted_score,
+    normalize_perplexity,
+    normalize_burstiness,
+    get_final_label,
+    get_confidence
+)
+
 from models.xlmr.predictor import predict_xlmr
 from models.deberta.predictor import predict_deberta
 
@@ -38,6 +46,9 @@ def analyze_text(text: str):
     burstiness = calculate_burstiness(cleaned_text)
     perplexity = calculate_perplexity(cleaned_text)
 
+    burstiness_score = normalize_burstiness(burstiness)
+    perplexity_score = normalize_perplexity(perplexity)
+
     sentence_results = analyze_sentences(cleaned_text)
 
     total_sentences = len(sentence_results)
@@ -51,31 +62,24 @@ def analyze_text(text: str):
 
     stylometry_ai_score = 1 - lexical_score
 
-    final_ai_score = (
-        0.35 * xlmr_ai_score +
-        0.35 * deberta_ai_score +
-        0.20 * sentence_ai_score +
-        0.10 * stylometry_ai_score
+    final_ai_score = weighted_score(
+        xlmr_ai_score=xlmr_ai_score,
+        deberta_ai_score=deberta_ai_score,
+        sentence_ai_score=sentence_ai_score,
+        stylometry_ai_score=stylometry_ai_score,
+        burstiness_score=burstiness_score,
+        perplexity_score=perplexity_score
     )
 
-    final_ai_score = round(final_ai_score, 4)
-
-    if final_ai_score >= 0.65:
-        final_label = "AI"
-        confidence = final_ai_score
-    elif final_ai_score <= 0.35:
-        final_label = "HUMAN"
-        confidence = 1 - final_ai_score
-    else:
-        final_label = "MIXED"
-        confidence = 1 - abs(0.5 - final_ai_score)
+    final_label = get_final_label(final_ai_score)
+    confidence = get_confidence(final_ai_score)
 
     return {
         "language": language,
 
         "final_label": final_label,
         "final_ai_score": final_ai_score,
-        "confidence": round(confidence, 4),
+        "confidence": confidence,
 
         "xlmr_label": xlmr_label,
         "xlmr_score": round(xlmr_score, 4),
@@ -88,11 +92,12 @@ def analyze_text(text: str):
         "lexical_richness": round(lexical_score, 4),
         "stylometry_ai_score": round(stylometry_ai_score, 4),
         "average_sentence_length": avg_sentence_len,
-
         "stylometry": style,
 
         "burstiness": burstiness,
+        "burstiness_score": burstiness_score,
         "perplexity": perplexity,
+        "perplexity_score": perplexity_score,
 
         "sentence_ai_score": round(sentence_ai_score, 4),
         "suspicious_sentences_count": len(ai_sentences) + len(mixed_sentences),
