@@ -2,10 +2,16 @@ from backend.services.preprocessing import split_sentences
 from models.xlmr.predictor import predict_xlmr
 
 
-def classify_score(score: float) -> str:
-    if score >= 0.75:
+def ai_probability(label: str, score: float) -> float:
+    if label == "AI":
+        return score
+    return 1 - score
+
+
+def classify_score(ai_score: float) -> str:
+    if ai_score >= 0.75:
         return "AI"
-    elif score >= 0.45:
+    elif ai_score >= 0.45:
         return "MIXED"
     else:
         return "HUMAN"
@@ -17,18 +23,22 @@ def analyze_sentences(text: str):
     results = []
 
     for sentence in sentences:
-        if len(sentence.split()) < 3:
+        if len(sentence.strip()) < 3:
             continue
 
         prediction = predict_xlmr(sentence)
-        score = prediction["score"]
+
         label = prediction["label"]
+        score = prediction["score"]
+
+        ai_score = ai_probability(label, score)
 
         results.append({
             "sentence": sentence,
             "label": label,
             "score": round(score, 4),
-            "risk_level": classify_score(score)
+            "ai_score": round(ai_score, 4),
+            "risk_level": classify_score(ai_score)
         })
 
     return results
