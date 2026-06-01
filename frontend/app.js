@@ -11,7 +11,9 @@ async function analyzeText() {
     headers: {
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({ text: text })
+    body: JSON.stringify({
+      text: text
+    })
   });
 
   const data = await response.json();
@@ -19,33 +21,62 @@ async function analyzeText() {
   document.getElementById("results").classList.remove("hidden");
   document.getElementById("sentencesSection").classList.remove("hidden");
 
-  let prediction = data.xlmr_label;
-  let aiScore = data.final_ai_score;
-  let displayScore = aiScore;
+  // Calcul du score global à partir des phrases
+  const sentences = data.sentence_analysis || [];
 
-  if (prediction === "HUMAN") {
-    displayScore = 1 - aiScore;
+  const humanCount = sentences.filter(
+    s => s.label === "HUMAN"
+  ).length;
+
+  const aiCount = sentences.filter(
+    s => s.label === "AI"
+  ).length;
+
+  const totalCount = sentences.length;
+
+  let prediction = "MIXED";
+  let score = 50;
+
+  if (humanCount > aiCount) {
+    prediction = "HUMAN";
+    score = Math.round((humanCount / totalCount) * 100);
+  } else if (aiCount > humanCount) {
+    prediction = "AI";
+    score = Math.round((aiCount / totalCount) * 100);
   }
 
   document.getElementById("prediction").innerText = prediction;
-  document.getElementById("score").innerText = Math.round(displayScore * 100) + "%";
+  document.getElementById("score").innerText = score + "%";
 
-  document.getElementById("language").innerText = data.language;
-  document.getElementById("lexical").innerText = data.lexical_richness;
-  document.getElementById("burstiness").innerText = data.burstiness;
-  document.getElementById("perplexity").innerText = data.perplexity;
+  document.getElementById("language").innerText =
+    data.language;
+
+  document.getElementById("lexical").innerText =
+    data.lexical_richness;
+
+  document.getElementById("burstiness").innerText =
+    data.burstiness;
+
+  document.getElementById("perplexity").innerText =
+    data.perplexity;
+
   document.getElementById("suspicious").innerText =
-    data.suspicious_sentences_count + " / " + data.total_sentences;
+    aiCount + " / " + totalCount;
 
   const sentencesDiv = document.getElementById("sentences");
+
   sentencesDiv.innerHTML = "";
 
-  data.sentence_analysis.forEach(item => {
+  sentences.forEach(item => {
     const div = document.createElement("div");
 
     let cssClass = "human";
-    if (item.label === "AI") cssClass = "ai";
-    if (item.risk_level === "MIXED") cssClass = "mixed";
+
+    if (item.label === "AI") {
+      cssClass = "ai";
+    } else if (item.label === "MIXED") {
+      cssClass = "mixed";
+    }
 
     div.className = "sentence " + cssClass;
 
