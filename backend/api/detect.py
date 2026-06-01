@@ -12,7 +12,7 @@ from backend.services.ensemble import (
 
 from models.xlmr.predictor import predict_xlmr
 from models.deberta.predictor import predict_deberta
-from models.meta_classifier.predictor import predict_meta
+#from models.meta_classifier.predictor import predict_meta
 
 
 def ai_probability(label: str, score: float) -> float:
