@@ -19,8 +19,17 @@ async function analyzeText() {
   document.getElementById("results").classList.remove("hidden");
   document.getElementById("sentencesSection").classList.remove("hidden");
 
-  document.getElementById("prediction").innerText = data.xlmr_label;
-  document.getElementById("score").innerText = Math.round(data.final_ai_score * 100) + "%";
+  let prediction = data.xlmr_label;
+  let aiScore = data.final_ai_score;
+  let displayScore = aiScore;
+
+  if (prediction === "HUMAN") {
+    displayScore = 1 - aiScore;
+  }
+
+  document.getElementById("prediction").innerText = prediction;
+  document.getElementById("score").innerText = Math.round(displayScore * 100) + "%";
+
   document.getElementById("language").innerText = data.language;
   document.getElementById("lexical").innerText = data.lexical_richness;
   document.getElementById("burstiness").innerText = data.burstiness;
@@ -35,7 +44,7 @@ async function analyzeText() {
     const div = document.createElement("div");
 
     let cssClass = "human";
-    if (item.risk_level === "AI") cssClass = "ai";
+    if (item.label === "AI") cssClass = "ai";
     if (item.risk_level === "MIXED") cssClass = "mixed";
 
     div.className = "sentence " + cssClass;
