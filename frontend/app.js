@@ -28,37 +28,43 @@ async function analyzeText() {
 
   console.log("Sentence AI Score :", data.sentence_ai_score);
   console.log("Final AI Score :", data.final_ai_score);
+  console.log("Final Label :", data.final_label);
   console.log("===========================");
 
   document.getElementById("results").classList.remove("hidden");
   document.getElementById("sentencesSection").classList.remove("hidden");
 
-  // Calcul du score global à partir des phrases
-  const sentences = data.sentence_analysis || [];
+  // ==========================
+  // RESULTAT GLOBAL BACKEND
+  // ==========================
 
-  const humanCount = sentences.filter(
-    s => s.label === "HUMAN"
-  ).length;
+  document.getElementById("prediction").innerText =
+    data.final_label;
 
-  const aiCount = sentences.filter(
-    s => s.label === "AI"
-  ).length;
+  let displayScore = 0;
 
-  const totalCount = sentences.length;
-
-  let prediction = "MIXED";
-  let score = 50;
-
-  if (humanCount > aiCount) {
-    prediction = "HUMAN";
-    score = Math.round((humanCount / totalCount) * 100);
-  } else if (aiCount > humanCount) {
-    prediction = "AI";
-    score = Math.round((aiCount / totalCount) * 100);
+  if (data.final_label === "AI") {
+    displayScore = Math.round(
+      data.final_ai_score * 100
+    );
+  }
+  else if (data.final_label === "HUMAN") {
+    displayScore = Math.round(
+      (1 - data.final_ai_score) * 100
+    );
+  }
+  else {
+    displayScore = Math.round(
+      data.confidence * 100
+    );
   }
 
-  document.getElementById("prediction").innerText = prediction;
-  document.getElementById("score").innerText = score + "%";
+  document.getElementById("score").innerText =
+    displayScore + "%";
+
+  // ==========================
+  // INFOS GENERALES
+  // ==========================
 
   document.getElementById("language").innerText =
     data.language;
@@ -73,30 +79,49 @@ async function analyzeText() {
     data.perplexity;
 
   document.getElementById("suspicious").innerText =
-    aiCount + " / " + totalCount;
+    data.suspicious_sentences_count +
+    " / " +
+    data.total_sentences;
 
-  const sentencesDiv = document.getElementById("sentences");
+  // ==========================
+  // ANALYSE PHRASE PAR PHRASE
+  // ==========================
+
+  const sentencesDiv =
+    document.getElementById("sentences");
 
   sentencesDiv.innerHTML = "";
 
+  const sentences =
+    data.sentence_analysis || [];
+
   sentences.forEach(item => {
+
     const div = document.createElement("div");
 
     let cssClass = "human";
 
     if (item.label === "AI") {
       cssClass = "ai";
-    } else if (item.label === "MIXED") {
+    }
+    else if (
+      item.label === "MIXED" ||
+      item.risk_level === "MIXED"
+    ) {
       cssClass = "mixed";
     }
 
-    div.className = "sentence " + cssClass;
+    div.className =
+      "sentence " + cssClass;
 
     div.innerHTML = `
       <p>${item.sentence}</p>
-      <strong>${item.label}</strong> — Score : ${Math.round(item.score * 100)}%
+      <strong>${item.label}</strong>
+      — Score : ${Math.round(item.score * 100)}%
     `;
 
     sentencesDiv.appendChild(div);
   });
+
+  console.log("Affichage terminé.");
 }
