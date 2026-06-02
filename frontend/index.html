@@ -6,11 +6,13 @@
   <title>AICheck Pro</title>
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
   <div class="container">
+
     <header>
       <h1>AICheck Pro</h1>
-      <p>Détection avancée de textes générés par IA</p>
+      <p>Dashboard avancé de détection de textes générés par IA</p>
     </header>
 
     <section class="card">
@@ -22,22 +24,97 @@
     <section id="results" class="card hidden">
       <h2>Résultat global</h2>
 
-      <div class="score-box">
-        <span id="prediction">---</span>
+      <div id="globalBox" class="global-box">
+        <div>
+          <span id="prediction">---</span>
+          <p id="interpretation">Analyse en attente...</p>
+        </div>
         <strong id="score">0%</strong>
       </div>
 
-      <p><b>Langue :</b> <span id="language"></span></p>
-      <p><b>Richesse lexicale :</b> <span id="lexical"></span></p>
-      <p><b>Burstiness :</b> <span id="burstiness"></span></p>
-      <p><b>Perplexity :</b> <span id="perplexity"></span></p>
-      <p><b>Phrases suspectes :</b> <span id="suspicious"></span></p>
+      <div class="grid">
+        <div class="mini-card">
+          <h3>Langue</h3>
+          <p id="language">---</p>
+        </div>
+
+        <div class="mini-card">
+          <h3>Confiance</h3>
+          <p id="confidence">---</p>
+        </div>
+
+        <div class="mini-card">
+          <h3>Phrases suspectes</h3>
+          <p id="suspicious">---</p>
+        </div>
+
+        <div class="mini-card">
+          <h3>Total phrases</h3>
+          <p id="totalSentences">---</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="modelsSection" class="card hidden">
+      <h2>Scores des modèles</h2>
+
+      <div class="bar-item">
+        <div class="bar-label">
+          <span>XLM-RoBERTa</span>
+          <strong id="xlmrValue">0%</strong>
+        </div>
+        <div class="bar"><div id="xlmrBar"></div></div>
+        <small id="xlmrLabel">---</small>
+      </div>
+
+      <div class="bar-item">
+        <div class="bar-label">
+          <span>DeBERTa-v3</span>
+          <strong id="debertaValue">0%</strong>
+        </div>
+        <div class="bar"><div id="debertaBar"></div></div>
+        <small id="debertaLabel">---</small>
+      </div>
+
+      <div class="bar-item">
+        <div class="bar-label">
+          <span>Analyse phrase par phrase</span>
+          <strong id="sentenceValue">0%</strong>
+        </div>
+        <div class="bar"><div id="sentenceBar"></div></div>
+      </div>
+
+      <div class="bar-item">
+        <div class="bar-label">
+          <span>Stylométrie</span>
+          <strong id="styleValue">0%</strong>
+        </div>
+        <div class="bar"><div id="styleBar"></div></div>
+      </div>
+    </section>
+
+    <section id="styleSection" class="card hidden">
+      <h2>Stylométrie avancée</h2>
+
+      <div class="grid">
+        <div class="mini-card"><h3>Mots</h3><p id="wordCount">---</p></div>
+        <div class="mini-card"><h3>Phrases</h3><p id="sentenceCount">---</p></div>
+        <div class="mini-card"><h3>Richesse lexicale</h3><p id="lexical">---</p></div>
+        <div class="mini-card"><h3>Longueur moyenne phrase</h3><p id="avgSentence">---</p></div>
+        <div class="mini-card"><h3>Longueur moyenne mot</h3><p id="avgWord">---</p></div>
+        <div class="mini-card"><h3>Répétition</h3><p id="repetition">---</p></div>
+        <div class="mini-card"><h3>Ponctuation</h3><p id="punctuation">---</p></div>
+        <div class="mini-card"><h3>Entropie</h3><p id="entropy">---</p></div>
+        <div class="mini-card"><h3>Burstiness</h3><p id="burstiness">---</p></div>
+        <div class="mini-card"><h3>Perplexity</h3><p id="perplexity">---</p></div>
+      </div>
     </section>
 
     <section id="sentencesSection" class="card hidden">
       <h2>Analyse phrase par phrase</h2>
       <div id="sentences"></div>
     </section>
+
   </div>
 
   <script src="app.js"></script>
