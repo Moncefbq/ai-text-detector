@@ -7,6 +7,7 @@ from backend.services.perplexity import calculate_perplexity
 
 from models.xlmr.predictor import predict_xlmr
 from models.deberta.predictor import predict_deberta
+from models.xlmr_large.predictor import predict_xlmr_large
 
 
 def ai_probability(label: str, score: float) -> float:
@@ -16,7 +17,6 @@ def ai_probability(label: str, score: float) -> float:
 
 
 def analyze_text(text: str):
-
     cleaned_text = clean_text(text)
     language = detect_language(cleaned_text)
 
@@ -29,6 +29,11 @@ def analyze_text(text: str):
     xlmr_label = xlmr_prediction["label"]
     xlmr_score = xlmr_prediction["score"]
     xlmr_ai_score = ai_probability(xlmr_label, xlmr_score)
+
+    xlmr_large_prediction = predict_xlmr_large(cleaned_text)
+    xlmr_large_label = xlmr_large_prediction["label"]
+    xlmr_large_score = xlmr_large_prediction["score"]
+    xlmr_large_ai_score = xlmr_large_prediction["ai_score"]
 
     deberta_prediction = predict_deberta(cleaned_text)
     deberta_label = deberta_prediction["label"]
@@ -44,19 +49,19 @@ def analyze_text(text: str):
     ai_sentences = [s for s in sentence_results if s["label"] == "AI"]
     mixed_sentences = [s for s in sentence_results if s["risk_level"] == "MIXED"]
 
-    if total_sentences > 0:
-        sentence_ai_score = len(ai_sentences) / total_sentences
-    else:
-        sentence_ai_score = 0.0
-
+    sentence_ai_score = len(ai_sentences) / total_sentences if total_sentences > 0 else 0.0
     stylometry_ai_score = 1 - lexical_score
 
     final_ai_score = (
-        0.35 * xlmr_ai_score +
-        0.35 * deberta_ai_score +
-        0.20 * sentence_ai_score +
+        0.25 * xlmr_ai_score +
+        0.25 * xlmr_large_ai_score +
+        0.25 * deberta_ai_score +
+        0.15 * sentence_ai_score +
         0.10 * stylometry_ai_score
     )
+
+    if xlmr_ai_score < 0.10 and xlmr_large_ai_score < 0.10 and sentence_ai_score == 0:
+        final_ai_score = min(final_ai_score, 0.08)
 
     final_ai_score = round(final_ai_score, 4)
 
@@ -80,6 +85,10 @@ def analyze_text(text: str):
         "xlmr_label": xlmr_label,
         "xlmr_score": round(xlmr_score, 4),
         "xlmr_ai_score": round(xlmr_ai_score, 4),
+
+        "xlmr_large_label": xlmr_large_label,
+        "xlmr_large_score": round(xlmr_large_score, 4),
+        "xlmr_large_ai_score": round(xlmr_large_ai_score, 4),
 
         "deberta_label": deberta_label,
         "deberta_score": round(deberta_score, 4),
