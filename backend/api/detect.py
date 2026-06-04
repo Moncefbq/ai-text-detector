@@ -1,3 +1,4 @@
+print("🔥 XLMR LARGE VERSION LOADED 🔥")
 from backend.services.preprocessing import clean_text
 from backend.services.language_detection import detect_language
 from backend.services.stylometry import stylometry_report
