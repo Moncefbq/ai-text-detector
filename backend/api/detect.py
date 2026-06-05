@@ -55,9 +55,10 @@ def analyze_text(text: str):
     stylometry_ai_score = 1 - lexical_score
 
     final_ai_score = (
-         0.40 * xlmr_ai_score +
-         0.40 * deberta_ai_score +
-         0.10 * sentence_ai_score +
+         0.25 * xlmr_ai_score +
+         0.25 * xlmr_large_ai_score +
+         0.25 * deberta_ai_score +
+         0.15 * sentence_ai_score +
          0.10 * stylometry_ai_score
     )
     if xlmr_ai_score < 0.10 and xlmr_large_ai_score < 0.10 and sentence_ai_score == 0:
