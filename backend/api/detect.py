@@ -18,7 +18,7 @@ def ai_probability(label: str, score: float) -> float:
 
 
 def analyze_text(text: str):
-        print("🔥 ANALYZE_TEXT FROM backend/api/detect.py CALLED 🔥")
+    print("🔥 ANALYZE_TEXT FROM backend/api/detect.py CALLED 🔥")
     cleaned_text = clean_text(text)
     language = detect_language(cleaned_text)
 
