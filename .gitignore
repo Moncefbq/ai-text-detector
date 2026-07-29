@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.env
+venv/
+env/
+.DS_Store
+node_modules/
+*.log
+
+# Modèles (trop volumineux pour GitHub)
+models/
